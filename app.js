@@ -1,21 +1,8 @@
-const express = require('express');
 const db = require('./db/connection');
 const prompts = require('./lib/questions');
-const { showDepartments, addDepartment, deleteDepartment } = require('./routes/departmentRoutes');
-
-const apiRoutes = require('./routes');
-
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use('/api',apiRoutes);
-
-//Default response for any other request (Not Found)
-app.use((req,res) => {
-  res.status(404).end();
-})
+const { showDepartments, addDepartment, deleteDepartment, showDepartmentEmployees, showDepartmentBudgets } = require('./lib/department');
+const { showRoles, addRole, deleteRole } = require('./lib/role');
+const { showEmployees, addEmployee, updateEmployeeRole, updateEmployeeManager, deleteEmployee } = require('./lib/employee');
 
 db.connect(err => {
   if (err) throw err;
@@ -47,8 +34,46 @@ db.connect(err => {
     .then((answers) => {
       const { initialChoices } = answers;
 
-      if(initialChoices === "View all departments") {
-        showDepartments();
+      switch (initialChoices) {
+        case 'VIEW all departments':
+          showDepartments();
+          break;
+        case 'VIEW all roles':
+          showRoles();
+          break;
+        case 'VIEW all employess':
+          showEmployees();
+          break;
+        case 'VIEW employees by department':
+          showDepartmentEmployees();
+          break;
+        case 'VIEW department budgets':
+          showDepartmentBudgets();
+          break;
+        case 'ADD a department':
+          addDepartment(answers.department);
+          break;
+        case 'ADD a role':
+          addRole(answers.roleName, answers.roleSalary);
+          break;
+        case 'ADD an employee':
+          addEmployee(answers.employeeFirstName, answers.employeeLastName);
+          break;
+        case 'UPDATE an employee role':
+          updateEmployeeRole();
+          break;
+        case "UPDATE an employee's manager":
+          updateEmployeeManager();
+          break;
+        case 'DELETE a department':
+          deleteDepartment();
+          break;
+        case 'DELETE a role':
+          deleteRole();
+          break;
+        case 'DELETE an employee':
+          deleteEmployee();
+          break;
       }
     });
 });
