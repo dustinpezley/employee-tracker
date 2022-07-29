@@ -1,9 +1,7 @@
 //=====Dependencies=====//
 const db = require('./db/connection');
-const questions = require('./lib/questions');
-const { showDepartments, addDepartment, deleteDepartment, showDepartmentEmployees, showDepartmentBudgets } = require('./lib/department');
-const { showRoles, addRole, deleteRole } = require('./lib/role');
-const { showEmployees, addEmployee, updateEmployeeRole, updateEmployeeManager, deleteEmployee } = require('./lib/employee');
+const terminalInterface = require('./lib/index');
+
 
 db.connect(err => {
   if (err) throw err;
@@ -28,53 +26,5 @@ db.connect(err => {
   // Confirm database connection
   console.log('Database connected.');
 
-  //Call questions
-  questions()
-  .then(answers => {
-    switch (answers.initialChoices) {
-      case 'VIEW all departments':
-        showDepartments();
-        break;
-      case 'VIEW all roles':
-        showRoles();
-        break;
-      case 'VIEW all employess':
-        showEmployees();
-        break;
-      case 'VIEW employees by department':
-        showDepartmentEmployees();
-        break;
-      case 'VIEW department budgets':
-        showDepartmentBudgets();
-        break;
-      case 'ADD a department':
-        addDepartment(answers.department);
-        break;
-      case 'ADD a role':
-        addRole(answers.roleName, answers.roleSalary);
-        break;
-      case 'ADD an employee':
-        addEmployee(answers.employeeFirstName, answers.employeeLastName);
-        break;
-      case 'UPDATE an employee role':
-        updateEmployeeRole();
-        break;
-      case "UPDATE an employee's manager":
-        updateEmployeeManager();
-        break;
-      case 'DELETE a department':
-        deleteDepartment();
-        break;
-      case 'DELETE a role':
-        deleteRole();
-        break;
-      case 'DELETE an employee':
-        deleteEmployee();
-        break;
-      case 'QUIT session':
-        db.end();
-        break;
-      default: db.end();
-    }
-  });
+  terminalInterface();
 });
